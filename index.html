@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Squishy + Trinkets Trading Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div>
+        <p>Squishy + Trinkets</p>
+        <h1>Trading Hub</h1>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="tab active" data-view="landing">Home</button>
+      <button class="tab" data-view="online">Online Hub</button>
+      <button class="tab" data-view="shop">Shop Hub</button>
+      <button class="tab" data-view="profile">Profile</button>
+    </nav>
+    <div class="status" style="display: flex; gap: 16px; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="pulse"></span>
+        <p>Live match queue</p>
+      </div>
+      <a href="login.html" class="primary" id="topLoginBtn" style="padding: 6px 16px; font-size: 12px; text-decoration: none;">Log In</a>
+      <div id="topUserMenu" hidden style="display: flex; align-items: center; gap: 12px;">
+        <img id="topAvatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line);" />
+        <a class="ghost" href="/auth/logout" style="padding: 6px 12px; font-size: 12px; text-decoration: none;">Sign Out</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="view active" id="landing">
+      <div class="shopping-hero">
+        <div>
+          <p class="eyebrow">No money, just vibes + trades</p>
+          <h2>Get trading inspiration</h2>
+          <p class="sub">A social trading space inspired by Pinterest shopping discovery. Match with someone, compare boards, and trade by vibe.</p>
+          <div class="cta-row">
+            <button class="primary" id="enterHub">Enter Trading Hub</button>
+            <button class="ghost" data-view="profile">Build Your Profile</button>
+          </div>
+        </div>
+        <div class="shopping-categories">
+          <h3>Explore categories</h3>
+          <div class="chip-row">
+            <button class="chip">Women’s Fashion</button>
+            <button class="chip">Beauty</button>
+            <button class="chip">Home Decor</button>
+            <button class="chip">Weddings</button>
+            <button class="chip">Art</button>
+            <button class="chip">Design</button>
+            <button class="chip">Men’s Fashion</button>
+            <button class="chip">DIY & Crafts</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="trend-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Shop trends</p>
+            <h2>Trade what’s trending</h2>
+          </div>
+        </div>
+        <div class="trend-grid">
+          <button class="trend-pill">Prom Dresses</button>
+          <button class="trend-pill">Mother of the Bride</button>
+          <button class="trend-pill">Black Prom Dress</button>
+          <button class="trend-pill">Graduation Dress</button>
+          <button class="trend-pill">Birthday Dress</button>
+          <button class="trend-pill">Plate Wall</button>
+          <button class="trend-pill">Decor Eclectic</button>
+          <button class="trend-pill">Bedroom Aesthetic</button>
+        </div>
+      </section>
+
+      <section class="explore-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Explore what people are trading</p>
+            <h2>Feed-style discovery</h2>
+          </div>
+        </div>
+        <div class="masonry">
+          <article class="pin-card">
+            <div class="pin-image blush"></div>
+            <div class="pin-body">
+              <h4>Decor Eclectic</h4>
+              <p>Soft pastel shelf styling + trinket clusters.</p>
+            </div>
+          </article>
+          <article class="pin-card">
+            <div class="pin-image sky"></div>
+            <div class="pin-body">
+              <h4>Home Gym Garage</h4>
+              <p>Minimal, clean vibes with soft squishy accents.</p>
+            </div>
+          </article>
+          <article class="pin-card">
+            <div class="pin-image cream"></div>
+            <div class="pin-body">
+              <h4>Bedroom Inspo</h4>
+              <p>Pastel boards, plush trades, and cozy corners.</p>
+            </div>
+          </article>
+          <article class="pin-card">
+            <div class="pin-image mint"></div>
+            <div class="pin-body">
+              <h4>Design</h4>
+              <p>Color stories + collectible accents.</p>
+            </div>
+          </article>
+          <article class="pin-card">
+            <div class="pin-image lavender"></div>
+            <div class="pin-body">
+              <h4>Art</h4>
+              <p>Handmade trades + curated display shots.</p>
+            </div>
+          </article>
+          <article class="pin-card">
+            <div class="pin-image aqua"></div>
+            <div class="pin-body">
+              <h4>DIY & Crafts</h4>
+              <p>Custom keychains, charms, and squishy edits.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <section class="view" id="online">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Online trading hub</p>
+          <h2>Match, compare, and offer trades live.</h2>
+        </div>
+        <div class="cta-row">
+          <button class="primary" id="matchNow">Match Me Now</button>
+          <button class="ghost" id="openCheckout">Trade Checkout</button>
+        </div>
+      </div>
+
+      <div class="online-grid">
+        <div class="trade-panel">
+          <div class="panel-head">
+            <h3>Current Match</h3>
+            <span class="badge" id="matchStatus">Waiting...</span>
+          </div>
+          <div class="match-card" id="matchCard">
+            <p class="muted">Tap “Match Me Now” or “Enter Trading Hub” to find someone.</p>
+          </div>
+          <div class="board">
+            <button class="board-btn success" title="accept trade">
+              <span>?</span>
+              Accept
+            </button>
+            <button class="board-btn add" id="openOffer" title="send offer">
+              <span>+</span>
+              Offer
+            </button>
+            <button class="board-btn decline" title="decline trade">
+              <span>?</span>
+              Decline
+            </button>
+          </div>
+          <p class="hint">Center board: green check to accept, plus to offer, and decline on the right.</p>
+          <p class="hint">On mobile: swipe left/right to switch tabs.</p>
+        </div>
+
+        <div class="side-stack">
+          <div class="chat-panel">
+            <div class="panel-head">
+              <h3>Match Chat</h3>
+              <span class="badge ghosted" id="chatStatus">Offline</span>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+              <input type="text" id="chatInput" placeholder="Message your match..." />
+              <button class="primary" id="sendChat">Send</button>
+            </div>
+          </div>
+
+          <div class="trade-feed">
+            <h3>Live Trade Feed</h3>
+            <div class="feed-item">
+              <div class="feed-avatar">J</div>
+              <div>
+                <p><strong>Juno</strong> offered <strong>Smiski Yoga</strong> for <strong>Needoh Swirl</strong>.</p>
+                <span>2 min ago</span>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar">K</div>
+              <div>
+                <p><strong>Kai</strong> liked your post “Rose Desk Setup”.</p>
+                <span>5 min ago</span>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar">S</div>
+              <div>
+                <p><strong>Sora</strong> posted <strong>Mofusand Bento</strong> new set.</p>
+                <span>9 min ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="shop">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Shop trading hub</p>
+          <h2>List what you have up for trade.</h2>
+        </div>
+        <button class="ghost" id="addListing">Add Listing</button>
+      </div>
+      <div class="listing-grid" id="listingGrid"></div>
+    </section>
+
+    <section class="view" id="profile">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Your profile</p>
+          <h2>Build your aesthetic trade space.</h2>
+        </div>
+        <button class="primary" id="addPost">New Post</button>
+      </div>
+      <div class="profile-layout">
+        <div class="profile-stack">
+
+          <div class="profile-card">
+          <div class="profile-header">
+            <div class="avatar" id="profileAvatar">M</div>
+            <div>
+              <h3 id="profileName">minty.muse</h3>
+              <p class="muted" id="profileBio">soft pastel + cozy desk, trades only.</p>
+              <div class="tag-row" id="profileTags"></div>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div>
+              <p>Trades</p>
+              <h4>24</h4>
+            </div>
+            <div>
+              <p>Likes</p>
+              <h4>1.2k</h4>
+            </div>
+            <div>
+              <p>Offers</p>
+              <h4>58</h4>
+            </div>
+          </div>
+          <div class="profile-form">
+            <label>
+              Display name
+              <input type="text" id="nameInput" value="minty.muse" />
+            </label>
+            <label>
+              Bio
+              <input type="text" id="bioInput" value="soft pastel + cozy desk, trades only." />
+            </label>
+            <label>
+              Aesthetic tags (comma separated)
+              <input type="text" id="tagsInput" value="pastel, cozy, soft pink" />
+            </label>
+            <button class="ghost" id="saveProfile">Save Profile</button>
+          </div>
+          <div class="board-preview">
+            <div class="board-header">
+              <h4>Boards</h4>
+              <button class="ghost" id="addBoard">New Board</button>
+            </div>
+            <div class="board-list" id="boardList"></div>
+          </div>
+        </div>
+        </div>
+
+        <div class="feed" id="postGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="matchModal" aria-hidden="true">
+    <div class="modal-card">
+      <p class="eyebrow">Matched!</p>
+      <h3 id="matchName">Luna</h3>
+      <p class="muted" id="matchVibe">Trades: smiski, mofusand. Aesthetic: moody cafe.</p>
+      <div class="match-tags" id="matchTags"></div>
+      <div class="modal-actions">
+        <button class="primary" data-close="matchModal">View Match</button>
+        <button class="ghost" data-close="matchModal">Keep Browsing</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="offerModal" aria-hidden="true">
+    <div class="modal-card wide">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Send a trade offer</p>
+          <h3>Select multiple items from your posts</h3>
+        </div>
+        <button class="ghost" data-close="offerModal">Close</button>
+      </div>
+      <div class="offer-grid" id="offerGrid"></div>
+      <div class="modal-actions">
+        <button class="primary" id="sendOffer">Send Offer</button>
+        <button class="ghost" data-close="offerModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="listingModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Add listing</p>
+          <h3>Share a trade listing</h3>
+        </div>
+        <button class="ghost" data-close="listingModal">Close</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          Listing title
+          <input type="text" id="listingTitle" placeholder="Needoh Swirl" />
+        </label>
+        <label>
+          Vibe / note
+          <input type="text" id="listingVibe" placeholder="Soft & glossy" />
+        </label>
+        <label>
+          Looking for
+          <input type="text" id="listingWants" placeholder="Smiski Yoga, Mofusand Bento" />
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="primary" id="saveListing">Save Listing</button>
+        <button class="ghost" data-close="listingModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="postModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">New post</p>
+          <h3>Create an aesthetic trade post</h3>
+        </div>
+        <button class="ghost" data-close="postModal">Close</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          Post title
+          <input type="text" id="postTitle" placeholder="Rose desk setup" />
+        </label>
+        <label>
+          Description
+          <input type="text" id="postDesc" placeholder="Soft pink, marshmallow squishy closeups." />
+        </label>
+        <label>
+          Items shown (comma separated)
+          <input type="text" id="postItems" placeholder="Needoh Swirl, Squishy Star" />
+        </label>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="postImage" accept="image/*" hidden />
+          <div class="drop-content">
+            <p>Drag & drop a photo, or <span>browse</span></p>
+            <small>PNG, JPG up to 4MB</small>
+          </div>
+          <img id="imagePreview" alt="Preview" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="primary" id="savePost">Save Post</button>
+        <button class="ghost" data-close="postModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="boardModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">New board</p>
+          <h3>Create a board for saves</h3>
+        </div>
+        <button class="ghost" data-close="boardModal">Close</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          Board name
+          <input type="text" id="boardName" placeholder="Pastel desk inspo" />
+        </label>
+        <label>
+          Description
+          <input type="text" id="boardDesc" placeholder="Soft pink & blue squishys" />
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="primary" id="saveBoard">Save Board</button>
+        <button class="ghost" data-close="boardModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="saveModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Save to board</p>
+          <h3>Pick a board</h3>
+        </div>
+        <button class="ghost" data-close="saveModal">Close</button>
+      </div>
+      <div class="board-list" id="saveBoardList"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="boardDetailModal" aria-hidden="true">
+    <div class="modal-card wide">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Board</p>
+          <h3 id="boardDetailTitle">Board name</h3>
+          <p class="muted" id="boardDetailDesc"></p>
+        </div>
+        <button class="ghost" data-close="boardDetailModal">Close</button>
+      </div>
+      <div class="board-filter">
+        <input type="text" id="boardSearch" placeholder="Search by title, item, vibe" />
+        <div class="board-tags" id="boardTags"></div>
+      </div>
+      <div class="board-detail-grid" id="boardDetailGrid"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="checkoutModal" aria-hidden="true">
+    <div class="modal-card wide">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Trade checkout</p>
+          <h3>Swap shipping details to complete the trade</h3>
+        </div>
+        <button class="ghost" data-close="checkoutModal">Close</button>
+      </div>
+      <div class="checkout-grid">
+        <div>
+          <h4>Your shipping</h4>
+          <label>
+            Name
+            <input type="text" id="shipName" placeholder="Your name" />
+          </label>
+          <label>
+            Address
+            <input type="text" id="shipAddress" placeholder="Street, city, state" />
+          </label>
+          <label>
+            Notes
+            <input type="text" id="shipNotes" placeholder="Packaging notes" />
+          </label>
+        </div>
+        <div>
+          <h4>Match shipping</h4>
+          <label>
+            Name
+            <input type="text" id="matchNameInput" placeholder="Their name" />
+          </label>
+          <label>
+            Address
+            <input type="text" id="matchAddress" placeholder="Street, city, state" />
+          </label>
+          <label>
+            Notes
+            <input type="text" id="matchNotes" placeholder="Their notes" />
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="primary" id="confirmCheckout">Confirm Trade</button>
+        <button class="ghost" data-close="checkoutModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

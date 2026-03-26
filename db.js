@@ -1,0 +1,237 @@
+const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
+
+const dbPath = path.join(__dirname, "data.db");
+
+function openDb() {
+  return new sqlite3.Database(dbPath);
+}
+
+function run(db, sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) reject(err);
+      else resolve(this);
+    });
+  });
+}
+
+function get(db, sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+}
+
+function all(db, sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+}
+
+function safeJsonParse(value, fallback) {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch (err) {
+    return fallback;
+  }
+}
+
+async function ensureColumn(db, table, column, definition) {
+  const rows = await all(db, `PRAGMA table_info(${table})`);
+  const hasColumn = rows.some((row) => row.name === column);
+  if (!hasColumn) {
+    await run(db, `ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+async function initDb() {
+  const db = openDb();
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS listings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      vibe TEXT NOT NULL,
+      wants TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      desc TEXT NOT NULL,
+      items TEXT NOT NULL,
+      likes INTEGER NOT NULL,
+      created_at TEXT NOT NULL
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS profile (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      name TEXT NOT NULL,
+      bio TEXT NOT NULL,
+      tags TEXT NOT NULL
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS boards (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS board_posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      board_id INTEGER NOT NULL,
+      post_id INTEGER NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(board_id, post_id)
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      google_sub TEXT NOT NULL UNIQUE,
+      email TEXT NOT NULL,
+      name TEXT NOT NULL,
+      picture TEXT,
+      created_at TEXT NOT NULL,
+      last_login_at TEXT NOT NULL
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS sessions (
+      token TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      created_at TEXT NOT NULL,
+      expires_at TEXT NOT NULL,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS user_profiles (
+      user_id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL,
+      bio TEXT NOT NULL,
+      tags TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    )`
+  );
+
+  await ensureColumn(db, "posts", "image_url", "TEXT");
+
+  const listingCount = await get(db, "SELECT COUNT(*) as count FROM listings");
+  const postCount = await get(db, "SELECT COUNT(*) as count FROM posts");
+  const profileRow = await get(db, "SELECT * FROM profile WHERE id = 1");
+
+  if (listingCount.count === 0) {
+    const defaults = [
+      {
+        title: "Needoh Swirl",
+        vibe: "Soft & glossy",
+        wants: "Smiski Yoga, Mofusand Bento",
+      },
+      {
+        title: "Mofusand Bento",
+        vibe: "Cafe core",
+        wants: "Smiski series 2",
+      },
+      {
+        title: "Smiski Yoga",
+        vibe: "Glow mini",
+        wants: "Needoh Cloud",
+      },
+      {
+        title: "Squishy Star",
+        vibe: "Pastel pop",
+        wants: "Mofusand keychains",
+      },
+    ];
+    for (const item of defaults) {
+      await run(
+        db,
+        "INSERT INTO listings (title, vibe, wants, created_at) VALUES (?, ?, ?, ?)",
+        [item.title, item.vibe, item.wants, new Date().toISOString()]
+      );
+    }
+  }
+
+  if (postCount.count === 0) {
+    const defaults = [
+      {
+        title: "Rose desk setup",
+        desc: "Soft pink, marshmallow squishy closeups.",
+        likes: 482,
+        items: ["Needoh Swirl", "Squishy Star"],
+      },
+      {
+        title: "Moody cafe shelf",
+        desc: "Smiski glow shots + mofusand stack.",
+        likes: 301,
+        items: ["Smiski Yoga", "Mofusand Bento"],
+      },
+      {
+        title: "Mini haul board",
+        desc: "New smiski + needoh drop.",
+        likes: 129,
+        items: ["Needoh Cloud", "Smiski Yoga"],
+      },
+    ];
+    for (const post of defaults) {
+      await run(
+        db,
+        "INSERT INTO posts (title, desc, items, likes, created_at, image_url) VALUES (?, ?, ?, ?, ?, ?)",
+        [
+          post.title,
+          post.desc,
+          JSON.stringify(post.items),
+          post.likes,
+          new Date().toISOString(),
+          null,
+        ]
+      );
+    }
+  }
+
+  if (!profileRow) {
+    const profile = {
+      name: "minty.muse",
+      bio: "soft pastel + cozy desk, trades only.",
+      tags: ["pastel", "cozy", "soft pink"],
+    };
+    await run(
+      db,
+      "INSERT INTO profile (id, name, bio, tags) VALUES (1, ?, ?, ?)",
+      [profile.name, profile.bio, JSON.stringify(profile.tags)]
+    );
+  }
+
+  return db;
+}
+
+module.exports = {
+  initDb,
+  run,
+  get,
+  all,
+  safeJsonParse,
+};
