@@ -29,11 +29,8 @@
         <span class="pulse"></span>
         <p>Live match queue</p>
       </div>
-      <a href="login.html" class="primary" id="topLoginBtn" style="padding: 6px 16px; font-size: 12px; text-decoration: none;">Log In</a>
-      <div id="topUserMenu" hidden style="display: flex; align-items: center; gap: 12px;">
-        <img id="topAvatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line);" />
-        <a class="ghost" href="/auth/logout" style="padding: 6px 12px; font-size: 12px; text-decoration: none;">Sign Out</a>
-      </div>
+      <div class="avatar" id="topAvatar" hidden style="width: 28px; height: 28px; font-size: 12px;">M</div>
+      <a href="login.html" class="primary" id="topAuthBtn" style="padding: 6px 16px; font-size: 12px; text-decoration: none;">Log In</a>
     </div>
   </header>
 
@@ -159,7 +156,7 @@
             <p class="muted">Tap “Match Me Now” or “Enter Trading Hub” to find someone.</p>
           </div>
           <div class="board">
-            <button class="board-btn success" title="accept trade">
+            <button class="board-btn success" id="acceptMatch" title="accept trade">
               <span>?</span>
               Accept
             </button>
@@ -167,13 +164,26 @@
               <span>+</span>
               Offer
             </button>
-            <button class="board-btn decline" title="decline trade">
+            <button class="board-btn decline" id="declineMatch" title="decline trade">
               <span>?</span>
               Decline
             </button>
           </div>
           <p class="hint">Center board: green check to accept, plus to offer, and decline on the right.</p>
           <p class="hint">On mobile: swipe left/right to switch tabs.</p>
+
+          <div class="trade-feed" id="offersInboxPanel">
+            <div class="panel-head">
+              <h3>Offers Inbox</h3>
+              <div class="offer-scope-tabs" id="offerScopeTabs">
+                <button class="chip active" data-offer-scope="received">Received</button>
+                <button class="chip" data-offer-scope="sent">Sent</button>
+              </div>
+            </div>
+            <div id="offersInboxList">
+              <p class="muted">No offers yet.</p>
+            </div>
+          </div>
         </div>
 
         <div class="side-stack">
@@ -189,7 +199,7 @@
             </div>
           </div>
 
-          <div class="trade-feed">
+          <div class="trade-feed" id="liveTradeFeedPanel">
             <h3>Live Trade Feed</h3>
             <div class="feed-item">
               <div class="feed-avatar">J</div>
@@ -213,6 +223,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -495,6 +506,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

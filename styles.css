@@ -438,6 +438,18 @@ main {
   gap: 14px;
 }
 
+.offer-scope-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.offer-scope-tabs .chip.active {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
 .feed-item {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -460,6 +472,26 @@ main {
 }
 
 .feed-item span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.offer-card {
+  display: grid;
+  gap: 8px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.offer-card strong,
+.offer-card p,
+.offer-card span {
+  word-break: break-word;
+}
+
+.offer-card .offer-meta {
   font-size: 11px;
   color: var(--muted);
 }

@@ -60,6 +60,7 @@ async function initDb() {
       title TEXT NOT NULL,
       vibe TEXT NOT NULL,
       wants TEXT NOT NULL,
+      user_id INTEGER,
       created_at TEXT NOT NULL
     )`
   );
@@ -136,8 +137,48 @@ async function initDb() {
       FOREIGN KEY(user_id) REFERENCES users(id)
     )`
   );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS matchmaking_queue (
+      user_id INTEGER PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS matches (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_a_id INTEGER NOT NULL,
+      user_b_id INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
+      accepted_by_user_id INTEGER,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY(user_a_id) REFERENCES users(id),
+      FOREIGN KEY(user_b_id) REFERENCES users(id)
+    )`
+  );
+  await run(
+    db,
+    `CREATE TABLE IF NOT EXISTS offers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      match_id INTEGER NOT NULL,
+      sender_user_id INTEGER NOT NULL,
+      recipient_user_id INTEGER NOT NULL,
+      selected_post_ids TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(match_id) REFERENCES matches(id),
+      FOREIGN KEY(sender_user_id) REFERENCES users(id),
+      FOREIGN KEY(recipient_user_id) REFERENCES users(id)
+    )`
+  );
 
   await ensureColumn(db, "posts", "image_url", "TEXT");
+  await ensureColumn(db, "matches", "accepted_by_user_id", "INTEGER");
+  await ensureColumn(db, "listings", "user_id", "INTEGER");
+  await ensureColumn(db, "offers", "recipient_user_id", "INTEGER");
 
   const listingCount = await get(db, "SELECT COUNT(*) as count FROM listings");
   const postCount = await get(db, "SELECT COUNT(*) as count FROM posts");
@@ -145,32 +186,16 @@ async function initDb() {
 
   if (listingCount.count === 0) {
     const defaults = [
-      {
-        title: "Needoh Swirl",
-        vibe: "Soft & glossy",
-        wants: "Smiski Yoga, Mofusand Bento",
-      },
-      {
-        title: "Mofusand Bento",
-        vibe: "Cafe core",
-        wants: "Smiski series 2",
-      },
-      {
-        title: "Smiski Yoga",
-        vibe: "Glow mini",
-        wants: "Needoh Cloud",
-      },
-      {
-        title: "Squishy Star",
-        vibe: "Pastel pop",
-        wants: "Mofusand keychains",
-      },
+      { title: "Needoh Swirl", vibe: "Soft & glossy", wants: "Smiski Yoga, Mofusand Bento" },
+      { title: "Mofusand Bento", vibe: "Cafe core", wants: "Smiski series 2" },
+      { title: "Smiski Yoga", vibe: "Glow mini", wants: "Needoh Cloud" },
+      { title: "Squishy Star", vibe: "Pastel pop", wants: "Mofusand keychains" },
     ];
     for (const item of defaults) {
       await run(
         db,
-        "INSERT INTO listings (title, vibe, wants, created_at) VALUES (?, ?, ?, ?)",
-        [item.title, item.vibe, item.wants, new Date().toISOString()]
+        "INSERT INTO listings (title, vibe, wants, user_id, created_at) VALUES (?, ?, ?, ?, ?)",
+        [item.title, item.vibe, item.wants, null, new Date().toISOString()]
       );
     }
   }
@@ -200,14 +225,7 @@ async function initDb() {
       await run(
         db,
         "INSERT INTO posts (title, desc, items, likes, created_at, image_url) VALUES (?, ?, ?, ?, ?, ?)",
-        [
-          post.title,
-          post.desc,
-          JSON.stringify(post.items),
-          post.likes,
-          new Date().toISOString(),
-          null,
-        ]
+        [post.title, post.desc, JSON.stringify(post.items), post.likes, new Date().toISOString(), null]
       );
     }
   }
@@ -218,11 +236,11 @@ async function initDb() {
       bio: "soft pastel + cozy desk, trades only.",
       tags: ["pastel", "cozy", "soft pink"],
     };
-    await run(
-      db,
-      "INSERT INTO profile (id, name, bio, tags) VALUES (1, ?, ?, ?)",
-      [profile.name, profile.bio, JSON.stringify(profile.tags)]
-    );
+    await run(db, "INSERT INTO profile (id, name, bio, tags) VALUES (1, ?, ?, ?)", [
+      profile.name,
+      profile.bio,
+      JSON.stringify(profile.tags),
+    ]);
   }
 
   return db;
