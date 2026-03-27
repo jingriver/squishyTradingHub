@@ -2,6 +2,7 @@ export const state = {
   listings: [],
   posts: [],
   profile: null,
+  profileStats: { trades: 0, likes: 0, offers: 0 },
   boards: [],
   pendingSavePostId: null,
   currentBoardPosts: [],

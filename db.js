@@ -72,6 +72,7 @@ async function initDb() {
       desc TEXT NOT NULL,
       items TEXT NOT NULL,
       likes INTEGER NOT NULL,
+      user_id INTEGER,
       created_at TEXT NOT NULL
     )`
   );
@@ -127,6 +128,18 @@ async function initDb() {
   );
   await run(
     db,
+    `CREATE TABLE IF NOT EXISTS local_credentials (
+      user_id INTEGER PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      password_salt TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    )`
+  );
+  await run(
+    db,
     `CREATE TABLE IF NOT EXISTS user_profiles (
       user_id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,
@@ -176,6 +189,7 @@ async function initDb() {
   );
 
   await ensureColumn(db, "posts", "image_url", "TEXT");
+  await ensureColumn(db, "posts", "user_id", "INTEGER");
   await ensureColumn(db, "matches", "accepted_by_user_id", "INTEGER");
   await ensureColumn(db, "listings", "user_id", "INTEGER");
   await ensureColumn(db, "offers", "recipient_user_id", "INTEGER");
@@ -224,8 +238,8 @@ async function initDb() {
     for (const post of defaults) {
       await run(
         db,
-        "INSERT INTO posts (title, desc, items, likes, created_at, image_url) VALUES (?, ?, ?, ?, ?, ?)",
-        [post.title, post.desc, JSON.stringify(post.items), post.likes, new Date().toISOString(), null]
+        "INSERT INTO posts (title, desc, items, likes, user_id, created_at, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [post.title, post.desc, JSON.stringify(post.items), post.likes, null, new Date().toISOString(), null]
       );
     }
   }

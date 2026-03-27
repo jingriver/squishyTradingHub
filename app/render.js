@@ -176,6 +176,15 @@ export function renderOffersInbox() {
   offersInboxList.innerHTML = items;
 }
 
+export function renderProfileStats() {
+  const trades = document.getElementById("profileTradesStat");
+  const likes = document.getElementById("profileLikesStat");
+  const offers = document.getElementById("profileOffersStat");
+  if (trades) trades.textContent = String(state.profileStats?.trades ?? 0);
+  if (likes) likes.textContent = String(state.profileStats?.likes ?? 0);
+  if (offers) offers.textContent = String(state.profileStats?.offers ?? 0);
+}
+
 function updateProfileTags(tags) {
   const tagWrap = document.getElementById("profileTags");
   tagWrap.innerHTML = "";

@@ -10,6 +10,7 @@ import {
   renderBoards,
   renderListings,
   renderOffersInbox,
+  renderProfileStats,
   renderPosts,
   renderTradeFeed,
   showView,
@@ -108,6 +109,11 @@ async function loadTradeFeed() {
 async function loadOffers() {
   state.offersInbox = await api.get(`/api/offers?scope=${state.offersScope}`);
   renderOffersInbox();
+}
+
+async function loadProfileStats() {
+  state.profileStats = await api.get("/api/profile/stats");
+  renderProfileStats();
 }
 
 function stopTradeFeedPolling() {
@@ -315,6 +321,14 @@ function setupGeneralHandlers() {
 
   saveProfile.addEventListener("click", async () => {
     if (!state.isAuthenticated) {
+      try {
+        const session = await loadSession();
+        applySession(session);
+      } catch (err) {
+        // Fall through to auth check below.
+      }
+    }
+    if (!state.isAuthenticated) {
       alert("Sign in to edit your profile.");
       return;
     }
@@ -325,6 +339,9 @@ function setupGeneralHandlers() {
       .value.split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
+    saveProfile.disabled = true;
+    const previousLabel = saveProfile.textContent;
+    saveProfile.textContent = "Saving...";
     try {
       state.profile = await api.put("/api/profile", {
         name: nameValue,
@@ -332,8 +349,12 @@ function setupGeneralHandlers() {
         tags: tagsValue,
       });
       applyProfile();
+      alert("Profile saved.");
     } catch (err) {
-      alert("Unable to save profile.");
+      alert(err?.message || "Unable to save profile.");
+    } finally {
+      saveProfile.disabled = false;
+      saveProfile.textContent = previousLabel;
     }
   });
 
@@ -490,14 +511,16 @@ async function init() {
       renderBoards();
       renderTradeFeed();
       renderOffersInbox();
+      renderProfileStats();
       clearMatchState();
       return;
     }
 
-    const [listData, postData, profileData, boardData, tradeFeedData, offersData] = await Promise.all([
+    const [listData, postData, profileData, profileStatsData, boardData, tradeFeedData, offersData] = await Promise.all([
       api.get("/api/listings"),
       api.get("/api/posts"),
       api.get("/api/profile"),
+      api.get("/api/profile/stats"),
       api.get("/api/boards"),
       api.get("/api/feed/live"),
       api.get(`/api/offers?scope=${state.offersScope}`),
@@ -505,12 +528,14 @@ async function init() {
     state.listings = listData;
     state.posts = postData;
     state.profile = profileData;
+    state.profileStats = profileStatsData;
     state.boards = boardData;
     state.liveTradeFeed = tradeFeedData;
     state.offersInbox = offersData;
     renderListings();
     renderPosts();
     applyProfile();
+    renderProfileStats();
     renderBoards();
     renderTradeFeed();
     renderOffersInbox();
