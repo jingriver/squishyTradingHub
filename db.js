@@ -78,15 +78,6 @@ async function initDb() {
   );
   await run(
     db,
-    `CREATE TABLE IF NOT EXISTS profile (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      name TEXT NOT NULL,
-      bio TEXT NOT NULL,
-      tags TEXT NOT NULL
-    )`
-  );
-  await run(
-    db,
     `CREATE TABLE IF NOT EXISTS boards (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -187,6 +178,7 @@ async function initDb() {
       FOREIGN KEY(recipient_user_id) REFERENCES users(id)
     )`
   );
+  await run(db, "DROP TABLE IF EXISTS profile");
 
   await ensureColumn(db, "posts", "image_url", "TEXT");
   await ensureColumn(db, "posts", "user_id", "INTEGER");
@@ -196,7 +188,6 @@ async function initDb() {
 
   const listingCount = await get(db, "SELECT COUNT(*) as count FROM listings");
   const postCount = await get(db, "SELECT COUNT(*) as count FROM posts");
-  const profileRow = await get(db, "SELECT * FROM profile WHERE id = 1");
 
   if (listingCount.count === 0) {
     const defaults = [
@@ -242,19 +233,6 @@ async function initDb() {
         [post.title, post.desc, JSON.stringify(post.items), post.likes, null, new Date().toISOString(), null]
       );
     }
-  }
-
-  if (!profileRow) {
-    const profile = {
-      name: "minty.muse",
-      bio: "soft pastel + cozy desk, trades only.",
-      tags: ["pastel", "cozy", "soft pink"],
-    };
-    await run(db, "INSERT INTO profile (id, name, bio, tags) VALUES (1, ?, ?, ?)", [
-      profile.name,
-      profile.bio,
-      JSON.stringify(profile.tags),
-    ]);
   }
 
   return db;
